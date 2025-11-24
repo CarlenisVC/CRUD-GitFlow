@@ -3,23 +3,29 @@ const nameInput = document.getElementById('nameInput');
 const emailInput = document.getElementById('emailInput');
 const tableBody = document.getElementById('tableBody'); 
 
-let data = [];
+let data = JSON.parse(localStorage.getItem('formData')) || [];
 
-form.addEventListener('submit', function(event) {
+form.addEventListener('submit',function(event) {
     event.preventDefault();
 
     const name = nameInput.value;
     const email = emailInput.value;
 
+    // agregar validación en el formulario
     if(name && email) {
-        const newData = {name, email};
+        const newData = {name,email};
         data.push(newData);
+        saveDataToLocalStorage();
         renderTable();
         form.reset();
-    } else {
+    } else{
         alert('Todos los datos son obligatorios');
     }
-})
+} )
+
+function saveDataToLocalStorage() {
+    localStorage.setItem('formData', JSON.stringify(data));
+}
 
 function renderTable() {
     tableBody.innerHTML = '';
@@ -37,6 +43,9 @@ function renderTable() {
         ediButton.textContent = 'Editar';
         eliButton.textContent = 'Eliminar';
 
+        ediButton.classList.add('button', 'button-secondary');
+        eliButton.classList.add('button', 'button-tertiary');
+
         ediButton.addEventListener('click', function(){
             ediData(index);
         })
@@ -53,6 +62,8 @@ function renderTable() {
         row.appendChild(actionCell);
 
         tableBody.appendChild(row);
+
+
     })
 }
 
@@ -61,10 +72,14 @@ function ediData(index){
     nameInput.value = item.name;
     emailInput.value = item.email;
     data.splice(index, 1);
+    saveDataToLocalStorage();
     renderTable();
 }
 
 function eliData(index){
     data.splice(index, 1);
+    saveDataToLocalStorage();
     renderTable();
 }
+
+renderTable();
